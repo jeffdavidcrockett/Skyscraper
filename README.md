@@ -1,5 +1,6 @@
 # Skyscraper
-CLI (Bash) program that retrieves current weather conditions from openweathermap API
+CLI (Bash) program that retrieves current weather conditions from openweathermap API. Retrieves
+weather data by city or zipcode.
 
 # What you need to know
 In order to use this program, you need to sign up on www.openweathermap.org and get your API key for 
