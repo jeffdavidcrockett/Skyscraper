@@ -57,7 +57,7 @@ func byCity(key string, city string) {
 
 func getWeather(fullurl string) {
 	weatherClient := http.Client {
-		Timeout: time.Second * 2,
+		Timeout: time.Second * 10,
 	}
 
 	req, err4 := http.NewRequest(http.MethodGet, fullurl, nil)
@@ -70,22 +70,26 @@ func getWeather(fullurl string) {
 		log.Fatal(getErr)
 	}
 
-	body, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		log.Fatal(readErr)
+	if res.StatusCode != 200 {
+		fmt.Println(Red("\nCity or zipcode not found!"))
+	} else {
+		body, readErr := ioutil.ReadAll(res.Body)
+		if readErr != nil {
+			log.Fatal(readErr)
+		}
+
+		weatherData := weatherAll{}
+		jsonErr := json.Unmarshal(body, &weatherData)
+		if jsonErr != nil {
+			log.Fatal(jsonErr)
 	}
 
-	weatherData := weatherAll{}
-	jsonErr := json.Unmarshal(body, &weatherData)
-	if jsonErr != nil {
-		log.Fatal(jsonErr)
+		fmt.Println(Cyan("\nCity:"), weatherData.Name)
+		fmt.Println(Cyan("Current conditions:"), weatherData.Weather[0].Description)
+		fmt.Println(Cyan("Temperature:"), weatherData.Main.Temp, "F")
+		fmt.Println(Cyan("Humidity:"), weatherData.Main.Humidity,"%")
+		fmt.Println(Cyan("Wind speed:"), weatherData.Wind.Speed, "MPH")
 	}
-
-	fmt.Println(Cyan("\nCity:"), weatherData.Name)
-	fmt.Println(Cyan("Current conditions:"), weatherData.Weather[0].Description)
-	fmt.Println(Cyan("Temperature:"), weatherData.Main.Temp, "F")
-	fmt.Println(Cyan("Humidity:"), weatherData.Main.Humidity,"%")
-	fmt.Println(Cyan("Wind speed:"), weatherData.Wind.Speed, "MPH")
 }
 
 func main() {
